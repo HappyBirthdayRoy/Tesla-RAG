@@ -69,7 +69,7 @@ def _build_result_dir(base: Path, run_id: str | None) -> Path:
 
 def _write_summary_md(path: Path, metrics: dict, per_question: list[dict], run_meta: dict, judge_status: str) -> None:
     lines: list[str] = []
-    lines.append("# T2 Evaluation Summary")
+    lines.append("# V1 Evaluation Summary")
     lines.append("")
     lines.append(f"- Run ID: {run_meta['run_id']}")
     lines.append(f"- Timestamp (UTC): {run_meta['timestamp_utc']}")
@@ -186,7 +186,7 @@ def run_eval(
     timestamp_utc = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
     output = {
-        "version": "t2-v1-eval",
+        "version": "v1-eval",
         "run": {
             "run_id": run_key,
             "timestamp_utc": timestamp_utc,
@@ -225,7 +225,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run V1 baseline evaluation against a fixed 10-question dataset.")
     parser.add_argument("--dataset", default="eval/datasets/v1_finance_qa_10.json")
     parser.add_argument("--chroma-dir", default=DEFAULT_CHROMA_DIR)
-    parser.add_argument("--out-dir", default="results/t2")
+    parser.add_argument("--out-dir", default="results/v1")
     parser.add_argument("--run-id", default=None)
     parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
     parser.add_argument("--scaffold-only", action="store_true")

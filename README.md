@@ -48,9 +48,14 @@ curl -X POST http://127.0.0.1:8000/ask \
 ```
 
 Response includes:
-- `answer` (extractive baseline from retrieved chunks)
+- `answer` (OpenAI-synthesized answer constrained to retrieved chunks)
 - `citations` (`source_file`, `page`)
 - `contexts` (retrieved chunks with metadata)
+
+OpenAI settings for answer synthesis:
+- `OPENAI_API_KEY` (required)
+- `TESLA_RAG_OPENAI_MODEL` (optional, default: `gpt-4.1-mini`)
+- `TESLA_RAG_OPENAI_BASE_URL` (optional)
 
 ## Tests
 
@@ -108,7 +113,7 @@ source .venv/bin/activate
 python -m tesla_rag.eval_v1 \
   --dataset eval/datasets/v1_finance_qa_10.json \
   --chroma-dir .chroma \
-  --out-dir results/t2 \
+  --out-dir results/v1 \
   --run-id v1-baseline
 ```
 
@@ -130,8 +135,8 @@ python -m tesla_rag.eval_v1 \
 ```
 
 Output files per run:
-- `results/t2/<run-id>/metrics.json` (machine-readable)
-- `results/t2/<run-id>/summary.md` (human-readable)
+- `results/v1/<run-id>/metrics.json` (machine-readable)
+- `results/v1/<run-id>/summary.md` (human-readable)
 
 Constraints:
 - No external corpus/data.

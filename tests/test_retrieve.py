@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from tesla_rag.service import RagService
 from tesla_rag.vectorstore import VectorStore
 
@@ -60,3 +62,21 @@ def test_hybrid_query_fuses_vector_and_bm25_rankings() -> None:
     docs = out["documents"][0]
     assert "keyword only hit" in docs
     assert len(docs) == 2
+
+
+def test_answer_fails_fast_when_openai_key_missing(tmp_path, fake_embedding, monkeypatch) -> None:
+    svc = RagService(
+        persist_dir=str(tmp_path / "chroma"),
+        collection_name="test_collection_failfast",
+        embedding_fn=fake_embedding,
+    )
+    inserted = svc.ingest(
+        [
+            "/home/node/.openclaw/media/inbound/0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+            "/home/node/.openclaw/media/inbound/0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+        ]
+    )
+    assert inserted > 0
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="OPENAI_API_KEY is required for answer synthesis"):
+        svc.answer("What was total revenue in Q3 2025?", top_k=2)

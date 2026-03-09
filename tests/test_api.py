@@ -12,11 +12,24 @@ PDFS = [
 ]
 
 
+class _FakeResponses:
+    def create(self, **kwargs):
+        class _Resp:
+            output_text = "Mocked synthesized answer"
+
+        return _Resp()
+
+
+class _FakeOpenAIClient:
+    responses = _FakeResponses()
+
+
 def test_ask_endpoint_smoke(tmp_path, fake_embedding) -> None:
     test_service = RagService(
         persist_dir=str(tmp_path / "chroma"),
         collection_name="api_test_collection",
         embedding_fn=fake_embedding,
+        llm_client=_FakeOpenAIClient(),
     )
     inserted = test_service.ingest(PDFS)
     assert inserted > 0

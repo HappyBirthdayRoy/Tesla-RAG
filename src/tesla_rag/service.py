@@ -1,11 +1,21 @@
 from __future__ import annotations
 
+import os
 from collections import OrderedDict
+from typing import Any
 
-from tesla_rag.config import DEFAULT_COLLECTION, DEFAULT_TOP_K
+from tesla_rag.config import DEFAULT_COLLECTION, DEFAULT_OPENAI_BASE_URL, DEFAULT_OPENAI_MODEL, DEFAULT_TOP_K
 from tesla_rag.ingest import extract_chunks
 from tesla_rag.models import Citation
 from tesla_rag.vectorstore import EmbeddingFn, VectorStore
+
+
+def _missing_openai_key_error() -> RuntimeError:
+    return RuntimeError(
+        "OPENAI_API_KEY is required for answer synthesis. "
+        "Set OPENAI_API_KEY and optionally TESLA_RAG_OPENAI_MODEL/TESLA_RAG_OPENAI_BASE_URL, "
+        "then retry. Fallback: use retrieve() for context-only output until credentials are configured."
+    )
 
 
 class RagService:
@@ -14,19 +24,23 @@ class RagService:
         persist_dir: str,
         collection_name: str = DEFAULT_COLLECTION,
         embedding_fn: EmbeddingFn | None = None,
+        llm_client: Any | None = None,
+        llm_model: str | None = None,
     ) -> None:
         self.store = VectorStore(
             persist_dir=persist_dir,
             collection_name=collection_name,
             embedding_fn=embedding_fn,
         )
+        self._llm_client = llm_client
+        self._llm_model = llm_model or DEFAULT_OPENAI_MODEL
 
     def ingest(self, pdf_paths: list[str]) -> int:
         chunks = extract_chunks(pdf_paths)
         return self.store.upsert_chunks(chunks)
 
     def retrieve(self, question: str, top_k: int = DEFAULT_TOP_K) -> list[dict]:
-        response = self.store.hybrid_query(question=question, top_k=top_k)
+        response = self.store.query(question=question, top_k=top_k)
         docs = response.get("documents", [[]])[0]
         metas = response.get("metadatas", [[]])[0]
         distances = response.get("distances", [[]])[0]
@@ -45,6 +59,46 @@ class RagService:
             )
         return out
 
+    def _ensure_llm_client(self) -> Any:
+        if self._llm_client is not None:
+            return self._llm_client
+
+        api_key = os.getenv("OPENAI_API_KEY", "").strip()
+        if not api_key:
+            raise _missing_openai_key_error()
+
+        from openai import OpenAI
+
+        base_url = DEFAULT_OPENAI_BASE_URL or None
+        self._llm_client = OpenAI(api_key=api_key, base_url=base_url)
+        return self._llm_client
+
+    def _synthesize_answer(self, question: str, contexts: list[dict]) -> str:
+        client = self._ensure_llm_client()
+        context_lines = []
+        for i, ctx in enumerate(contexts, start=1):
+            text = ctx["text"].strip().replace("\n", " ")
+            context_lines.append(f"[{i}] {ctx['source_file']} p.{ctx['page']}: {text}")
+
+        prompt = (
+            "Answer the user question using only the provided contexts from Tesla PDFs. "
+            "If the answer is not in the contexts, say exactly: Not found in provided contexts.\n\n"
+            f"Question: {question}\n\n"
+            "Contexts:\n"
+            + "\n".join(context_lines)
+            + "\n\nReturn only the answer text."
+        )
+
+        response = client.responses.create(
+            model=self._llm_model,
+            input=prompt,
+            temperature=0,
+        )
+        output_text = (response.output_text or "").strip()
+        if not output_text:
+            return "Not found in provided contexts."
+        return output_text
+
     def answer(self, question: str, top_k: int = DEFAULT_TOP_K) -> dict:
         contexts = self.retrieve(question=question, top_k=top_k)
         if not contexts:
@@ -55,15 +109,11 @@ class RagService:
             }
 
         citations_map: OrderedDict[tuple[str, int], Citation] = OrderedDict()
-        snippets: list[str] = []
         for ctx in contexts:
             key = (ctx["source_file"], ctx["page"])
             citations_map[key] = Citation(source_file=ctx["source_file"], page=ctx["page"])
-            snippet = ctx["text"].strip().replace("\n", " ")
-            snippet = snippet[:240] + ("..." if len(snippet) > 240 else "")
-            snippets.append(f"[{ctx['source_file']} p.{ctx['page']}] {snippet}")
 
-        answer_text = "\n".join(snippets)
+        answer_text = self._synthesize_answer(question=question, contexts=contexts)
         citations = [{"source_file": c.source_file, "page": c.page} for c in citations_map.values()]
 
         return {
