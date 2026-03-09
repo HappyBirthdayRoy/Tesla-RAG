@@ -1,0 +1,184 @@
+{
+  "version": "t2-v1-eval",
+  "run": {
+    "run_id": "20260309T073125Z-t2",
+    "timestamp_utc": "2026-03-09T07:34:46Z",
+    "dataset_path": "eval/datasets/v1_finance_qa_10.json",
+    "dataset_sha256": "ab74439be2518bbac518c132d4d7d7814ef05a0caac95249abd108238f1fdd0f",
+    "chroma_dir": ".chroma",
+    "top_k": 4
+  },
+  "constraints": {
+    "dataset_meta": {
+      "name": "v1_finance_qa_10",
+      "description": "10-question constrained finance QA dataset derived only from local metadata/text signals inside the two allowed PDFs.",
+      "allowed_pdfs": [
+        "/home/node/.openclaw/media/inbound/0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "/home/node/.openclaw/media/inbound/0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "derivation_notes": [
+        "Questions are sourced only from the two approved files.",
+        "No external corpus or internet data is used.",
+        "This V1 dataset focuses on explicit deck identity/quarter metadata facts."
+      ]
+    },
+    "external_corpus_used": false
+  },
+  "metrics": {
+    "exact_match": 0.0,
+    "contains_gold": 0.0,
+    "total_questions": 10,
+    "exact_match_hits": 0,
+    "contains_gold_hits": 0
+  },
+  "judge_metrics": {
+    "status": "scaffold_only",
+    "reason": "no judge model configured in V1 baseline",
+    "rubric_path": "eval/prompts/judge_scaffold_v1.md"
+  },
+  "per_question": [
+    {
+      "id": "q01",
+      "question": "What quarter is covered by the first approved update deck PDF?",
+      "gold_answer": "2025 Q3",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q02",
+      "question": "What quarter is covered by the second approved update deck PDF?",
+      "gold_answer": "2025 Q4",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q03",
+      "question": "What is the exact title of the first approved deck?",
+      "gold_answer": "2025 Q3 Quarterly Update Deck",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q04",
+      "question": "What is the exact title of the second approved deck?",
+      "gold_answer": "2025 Q4 Quarterly Update Deck",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q05",
+      "question": "Which software created both quarterly update PDFs?",
+      "gold_answer": "Adobe InDesign 14.0 (Macintosh)",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q06",
+      "question": "Who is listed as the author in the Q4 quarterly update deck metadata?",
+      "gold_answer": "Travis Axelrod",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q07",
+      "question": "Which quarter in scope is later: Q3 or Q4 of 2025?",
+      "gold_answer": "Q4 of 2025",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q08",
+      "question": "How many quarterly update decks are included in this constrained corpus?",
+      "gold_answer": "2",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q09",
+      "question": "What is the producer string shown in the Q4 PDF metadata?",
+      "gold_answer": "macOS Version 26.2 (Build 25C56) Quartz PDFContext, AppendMode 1.1",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    },
+    {
+      "id": "q10",
+      "question": "What created timestamp appears in the Q4 PDF metadata?",
+      "gold_answer": "D:20260128123137-08'00'",
+      "prediction": null,
+      "citations": [],
+      "citation_sources": [],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": null,
+      "contains_gold": null,
+      "source_constraint_ok": null
+    }
+  ]
+}

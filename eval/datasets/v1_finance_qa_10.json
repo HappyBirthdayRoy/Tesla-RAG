@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "name": "v1_finance_qa_10",
+    "description": "10-question constrained finance QA dataset derived only from local metadata/text signals inside the two allowed PDFs.",
+    "allowed_pdfs": [
+      "/home/node/.openclaw/media/inbound/0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+      "/home/node/.openclaw/media/inbound/0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+    ],
+    "derivation_notes": [
+      "Questions are sourced only from the two approved files.",
+      "No external corpus or internet data is used.",
+      "This V1 dataset focuses on explicit deck identity/quarter metadata facts."
+    ]
+  },
+  "items": [
+    {
+      "id": "q01",
+      "question": "What quarter is covered by the first approved update deck PDF?",
+      "answer": "2025 Q3",
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf"
+      ]
+    },
+    {
+      "id": "q02",
+      "question": "What quarter is covered by the second approved update deck PDF?",
+      "answer": "2025 Q4",
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    },
+    {
+      "id": "q03",
+      "question": "What is the exact title of the first approved deck?",
+      "answer": "2025 Q3 Quarterly Update Deck",
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf"
+      ]
+    },
+    {
+      "id": "q04",
+      "question": "What is the exact title of the second approved deck?",
+      "answer": "2025 Q4 Quarterly Update Deck",
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    },
+    {
+      "id": "q05",
+      "question": "Which software created both quarterly update PDFs?",
+      "answer": "Adobe InDesign 14.0 (Macintosh)",
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    },
+    {
+      "id": "q06",
+      "question": "Who is listed as the author in the Q4 quarterly update deck metadata?",
+      "answer": "Travis Axelrod",
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    },
+    {
+      "id": "q07",
+      "question": "Which quarter in scope is later: Q3 or Q4 of 2025?",
+      "answer": "Q4 of 2025",
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    },
+    {
+      "id": "q08",
+      "question": "How many quarterly update decks are included in this constrained corpus?",
+      "answer": "2",
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    },
+    {
+      "id": "q09",
+      "question": "What is the producer string shown in the Q4 PDF metadata?",
+      "answer": "macOS Version 26.2 (Build 25C56) Quartz PDFContext, AppendMode 1.1",
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    },
+    {
+      "id": "q10",
+      "question": "What created timestamp appears in the Q4 PDF metadata?",
+      "answer": "D:20260128123137-08'00'",
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ]
+    }
+  ]
+}

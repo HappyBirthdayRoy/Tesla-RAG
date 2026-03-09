@@ -60,6 +60,14 @@ source .venv/bin/activate
 pytest -q
 ```
 
+## V1 baseline metrics
+
+Versioned baseline outputs are stored under `results/v1/<run-id>/`.
+
+Current baseline artifact (this workspace run):
+- `results/v1/20260309T073125Z-baseline/metrics.json`
+- `results/v1/20260309T073125Z-baseline/summary.md`
+
 ## Docker
 
 Build:
@@ -83,3 +91,48 @@ Run API container:
 ```bash
 docker run --rm -p 8000:8000 tesla-rag:latest
 ```
+
+## T2 evaluation harness
+
+Dataset (10 questions, constrained to the two approved PDFs only):
+- `eval/datasets/v1_finance_qa_10.json`
+
+Judge scaffold (optional, not executed in V1):
+- `eval/prompts/judge_scaffold_v1.md`
+
+Run reproducible evaluation:
+
+```bash
+cd /home/node/.openclaw/workspace/tesla-rag
+source .venv/bin/activate
+python -m tesla_rag.eval_v1 \
+  --dataset eval/datasets/v1_finance_qa_10.json \
+  --chroma-dir .chroma \
+  --out-dir results/t2 \
+  --run-id v1-baseline
+```
+
+Or via wrapper:
+
+```bash
+cd /home/node/.openclaw/workspace/tesla-rag
+./scripts/run_eval_v1.sh v1-baseline
+```
+
+If runtime dependencies are unavailable and you need output scaffolds only:
+
+```bash
+python -m tesla_rag.eval_v1 \
+  --dataset eval/datasets/v1_finance_qa_10.json \
+  --out-dir results/t2 \
+  --run-id v1-scaffold \
+  --scaffold-only
+```
+
+Output files per run:
+- `results/t2/<run-id>/metrics.json` (machine-readable)
+- `results/t2/<run-id>/summary.md` (human-readable)
+
+Constraints:
+- No external corpus/data.
+- Allowed sources are explicit in dataset metadata and each item's `allowed_sources`.
