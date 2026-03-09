@@ -123,7 +123,7 @@ class VectorStore:
         for rank, doc_id in enumerate(vector_ranked_ids, start=1):
             fused_scores[doc_id] = fused_scores.get(doc_id, 0.0) + 1.0 / (rrf_k + rank)
         for rank, doc_id in enumerate(bm25_ranked_ids, start=1):
-            fused_scores[doc_id] = fused_scores.get(doc_id, 0.0) + 1.0 / (rrf_k + rank)
+            fused_scores[doc_id] = fused_scores.get(doc_id, 0.0) + 1.35 / (rrf_k + rank)
 
         ranked = sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
 
