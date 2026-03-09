@@ -1,0 +1,383 @@
+{
+  "version": "t2-v1-eval",
+  "run": {
+    "run_id": "20260309T0825Z-v2-chunk",
+    "timestamp_utc": "2026-03-09T08:28:48Z",
+    "dataset_path": "eval/datasets/v1_finance_qa_10.json",
+    "dataset_sha256": "ab74439be2518bbac518c132d4d7d7814ef05a0caac95249abd108238f1fdd0f",
+    "chroma_dir": ".chroma_v2",
+    "top_k": 4
+  },
+  "constraints": {
+    "dataset_meta": {
+      "name": "v1_finance_qa_10",
+      "description": "10-question constrained finance QA dataset derived only from local metadata/text signals inside the two allowed PDFs.",
+      "allowed_pdfs": [
+        "/home/node/.openclaw/media/inbound/0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "/home/node/.openclaw/media/inbound/0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "derivation_notes": [
+        "Questions are sourced only from the two approved files.",
+        "No external corpus or internet data is used.",
+        "This V1 dataset focuses on explicit deck identity/quarter metadata facts."
+      ]
+    },
+    "external_corpus_used": false
+  },
+  "metrics": {
+    "exact_match": 0.0,
+    "contains_gold": 0.1,
+    "total_questions": 10,
+    "exact_match_hits": 0,
+    "contains_gold_hits": 1
+  },
+  "judge_metrics": {
+    "status": "not_executed",
+    "reason": "no judge model configured in V1 baseline",
+    "rubric_path": "eval/prompts/judge_scaffold_v1.md"
+  },
+  "per_question": [
+    {
+      "id": "q01",
+      "question": "What quarter is covered by the first approved update deck PDF?",
+      "gold_answer": "2025 Q3",
+      "prediction": "[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.28] (Unaudited) 28(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.23] (Unaudited) 23(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.1] Q3 2025 Update 1\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.30] (Unaudited ) 30(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast. (2) Beginning in Q1'25, Capital expenditures is presented inclusive of purchases of energ...",
+      "citations": [
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 28
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 23
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 1
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 30
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": false
+    },
+    {
+      "id": "q02",
+      "question": "What quarter is covered by the second approved update deck PDF?",
+      "gold_answer": "2025 Q4",
+      "prediction": "[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.28] (Unaudited) 28(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.23] (Unaudited) 23(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.1] Q3 2025 Update 1\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.7] Model 3/Y production 906,032 1,298,434 1,775,159 1,679,338 1,600,767 -5% Other models production 24,390 71,177 70,826 94,105 53,900 -43% Total production 930,422 1,369,611 1,845,985 1,773,443 1,654,667 -7% Model 3/Y deliveries 911,242 1,247...",
+      "citations": [
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 28
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 23
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 1
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 7
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": false
+    },
+    {
+      "id": "q03",
+      "question": "What is the exact title of the first approved deck?",
+      "gold_answer": "2025 Q3 Quarterly Update Deck",
+      "prediction": "[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.7] Model 3/Y production 906,032 1,298,434 1,775,159 1,679,338 1,600,767 -5% Other models production 24,390 71,177 70,826 94,105 53,900 -43% Total production 930,422 1,369,611 1,845,985 1,773,443 1,654,667 -7% Model 3/Y deliveries 911,242 1,247...\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.8] ign. The Gen 3 is our first design meant for mass production. Preparations are underway for the first production line, including supply chain readiness, with start of production planned before the end of 2026 and eventual planned capacity o...\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.31] 16.6% 16.2% 17.2% 17.0% 20.4% Less: Total regulatory credit revenue recognized 3.0% 3.7% 2.2% 1.6% 2.5% Automotive gross margin excluding regulatory credit sales (non -GAAP) 13.6% 12.5% 15.0% 15.4% 17.9% R E C O N C I L I A T I O N O F G A ...\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.6] Q4-2024 Q1-2025 Q2-2025 Q3-2025 Q4-2025 YoY Model 3/Y production 436,718 345,454 396,835 435,826 422,652 -3% Other models production 22,727 17,161 13,409 11,624 11,706 -48% Total production 459,445 362,615 410,244 447,450 434,358 -5% Model ...",
+      "citations": [
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 7
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 8
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 31
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 6
+        }
+      ],
+      "citation_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": false
+    },
+    {
+      "id": "q04",
+      "question": "What is the exact title of the second approved deck?",
+      "gold_answer": "2025 Q4 Quarterly Update Deck",
+      "prediction": "[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.7] Model 3/Y production 906,032 1,298,434 1,775,159 1,679,338 1,600,767 -5% Other models production 24,390 71,177 70,826 94,105 53,900 -43% Total production 930,422 1,369,611 1,845,985 1,773,443 1,654,667 -7% Model 3/Y deliveries 911,242 1,247...\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.6] Q4-2024 Q1-2025 Q2-2025 Q3-2025 Q4-2025 YoY Model 3/Y production 436,718 345,454 396,835 435,826 422,652 -3% Other models production 22,727 17,161 13,409 11,624 11,706 -48% Total production 459,445 362,615 410,244 447,450 434,358 -5% Model ...\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.24] Current liabilities Accounts payable 14,654 12,474 13,471 13,212 12,819 Accrued liabilities and other 10,601 10,723 10,802 11,519 12,791 Deferred revenue 3,031 3,168 3,243 3,237 3,756 Current portion of debt and finance leases (1) 2,291 2,4...\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.29] Current liabilities Accounts payable 12,474 13,471 13,212 12,819 13,371 Accrued liabilities and other 10,723 10,802 11,519 12,791 13,279 Deferred revenue 3,168 3,243 3,237 3,756 3,424 Current portion of debt and finance leases (1) 2,456 2,2...",
+      "citations": [
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 7
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 6
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 24
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 29
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": false
+    },
+    {
+      "id": "q05",
+      "question": "Which software created both quarterly update PDFs?",
+      "gold_answer": "Adobe InDesign 14.0 (Macintosh)",
+      "prediction": "[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.28] (Unaudited) 28(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.23] (Unaudited) 23(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.33] standard, the previously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.27] reviously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.",
+      "citations": [
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 28
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 23
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 33
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 27
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": true
+    },
+    {
+      "id": "q06",
+      "question": "Who is listed as the author in the Q4 quarterly update deck metadata?",
+      "gold_answer": "Travis Axelrod",
+      "prediction": "[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.1] Q4 and FY 2025 Update 1\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.1] Q3 2025 Update 1\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.27] reviously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.33] standard, the previously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.",
+      "citations": [
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 1
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 1
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 27
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 33
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": false
+    },
+    {
+      "id": "q07",
+      "question": "Which quarter in scope is later: Q3 or Q4 of 2025?",
+      "gold_answer": "Q4 of 2025",
+      "prediction": "[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.25] In millions of USD Q3-2024 Q4-2024 Q1-2025 Q2-2025 Q3-2025\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.30] In millions of USD Q4-2024 Q1-2025 Q2-2025 Q3-2025 Q4-2025\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.1] Q3 2025 Update 1\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.1] Q4 and FY 2025 Update 1",
+      "citations": [
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 25
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 30
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 1
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 1
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": true
+    },
+    {
+      "id": "q08",
+      "question": "How many quarterly update decks are included in this constrained corpus?",
+      "gold_answer": "2",
+      "prediction": "[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.23] (Unaudited) 23(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.28] (Unaudited) 28(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.33] standard, the previously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.27] reviously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.",
+      "citations": [
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 23
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 28
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 33
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 27
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": true,
+      "source_constraint_ok": true
+    },
+    {
+      "id": "q09",
+      "question": "What is the producer string shown in the Q4 PDF metadata?",
+      "gold_answer": "macOS Version 26.2 (Build 25C56) Quartz PDFContext, AppendMode 1.1",
+      "prediction": "[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.6] Q4-2024 Q1-2025 Q2-2025 Q3-2025 Q4-2025 YoY Model 3/Y production 436,718 345,454 396,835 435,826 422,652 -3% Other models production 22,727 17,161 13,409 11,624 11,706 -48% Total production 459,445 362,615 410,244 447,450 434,358 -5% Model ...\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.27] reviously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.33] standard, the previously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.30] In millions of USD Q4-2024 Q1-2025 Q2-2025 Q3-2025 Q4-2025",
+      "citations": [
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 6
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 27
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 33
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 30
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": false
+    },
+    {
+      "id": "q10",
+      "question": "What created timestamp appears in the Q4 PDF metadata?",
+      "gold_answer": "D:20260128123137-08'00'",
+      "prediction": "[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.27] reviously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.1] Q4 and FY 2025 Update 1\n[0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf p.33] standard, the previously reported quarterly periods in 2024 have been re cast. (3) Beginning in Q1'25, Adjusted EBITDA (non- GAAP) is presented net of digital assets gains and losses and all prior periods have be en adjusted.\n[0af5279c-11f2-4069-8708-061dfda248ae.pdf p.23] (Unaudited) 23(1) As a result of the adoption of the new crypto assets standard, the previously reported quarterly periods in 2024 have been re cast.",
+      "citations": [
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 27
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 1
+        },
+        {
+          "source_file": "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf",
+          "page": 33
+        },
+        {
+          "source_file": "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+          "page": 23
+        }
+      ],
+      "citation_sources": [
+        "0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "allowed_sources": [
+        "0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+      ],
+      "exact_match": false,
+      "contains_gold": false,
+      "source_constraint_ok": false
+    }
+  ]
+}

@@ -6,9 +6,10 @@ from typing import Iterable
 
 from pypdf import PdfReader
 
+from tesla_rag.config import DEFAULT_CHUNK_MAX_CHARS, DEFAULT_CHUNK_OVERLAP_CHARS
 from tesla_rag.models import Chunk
 
-_HEADING_RE = re.compile(r"^(\d+(\.\d+)*\s+.+|[A-Z][A-Z\s\-:]{4,}|[A-Z][\w\s\-:]{3,})$")
+_HEADING_RE = re.compile(r"^(\d+(\.\d+)*\s+.+|[A-Z][A-Z\s\-:]{4,})$")
 
 
 def clean_text(text: str) -> str:
@@ -59,7 +60,19 @@ def split_sections(text: str) -> list[tuple[str, str]]:
     return output
 
 
-def chunk_text(section_title: str, section_text: str, max_chars: int = 1000, overlap_chars: int = 200) -> list[tuple[str, str]]:
+def chunk_text(
+    section_title: str,
+    section_text: str,
+    max_chars: int = DEFAULT_CHUNK_MAX_CHARS,
+    overlap_chars: int = DEFAULT_CHUNK_OVERLAP_CHARS,
+) -> list[tuple[str, str]]:
+    if max_chars <= 0:
+        raise ValueError("max_chars must be > 0")
+    if overlap_chars < 0:
+        raise ValueError("overlap_chars must be >= 0")
+    if overlap_chars >= max_chars:
+        raise ValueError("overlap_chars must be < max_chars")
+
     if len(section_text) <= max_chars:
         return [(section_title, section_text)]
 
@@ -76,7 +89,11 @@ def chunk_text(section_title: str, section_text: str, max_chars: int = 1000, ove
     return chunks
 
 
-def extract_chunks_from_pdf(pdf_path: str) -> list[Chunk]:
+def extract_chunks_from_pdf(
+    pdf_path: str,
+    max_chars: int = DEFAULT_CHUNK_MAX_CHARS,
+    overlap_chars: int = DEFAULT_CHUNK_OVERLAP_CHARS,
+) -> list[Chunk]:
     reader = PdfReader(pdf_path)
     source_file = Path(pdf_path).name
     results: list[Chunk] = []
@@ -88,7 +105,9 @@ def extract_chunks_from_pdf(pdf_path: str) -> list[Chunk]:
 
         sections = split_sections(page_text)
         for section_i, (section_title, section_text) in enumerate(sections):
-            for chunk_i, (_, text) in enumerate(chunk_text(section_title, section_text)):
+            for chunk_i, (_, text) in enumerate(
+                chunk_text(section_title, section_text, max_chars=max_chars, overlap_chars=overlap_chars)
+            ):
                 chunk_id = f"{source_file}-p{page_index+1}-s{section_i}-c{chunk_i}"
                 results.append(
                     Chunk(
@@ -102,8 +121,12 @@ def extract_chunks_from_pdf(pdf_path: str) -> list[Chunk]:
     return results
 
 
-def extract_chunks(pdf_paths: Iterable[str]) -> list[Chunk]:
+def extract_chunks(
+    pdf_paths: Iterable[str],
+    max_chars: int = DEFAULT_CHUNK_MAX_CHARS,
+    overlap_chars: int = DEFAULT_CHUNK_OVERLAP_CHARS,
+) -> list[Chunk]:
     all_chunks: list[Chunk] = []
     for path in pdf_paths:
-        all_chunks.extend(extract_chunks_from_pdf(path))
+        all_chunks.extend(extract_chunks_from_pdf(path, max_chars=max_chars, overlap_chars=overlap_chars))
     return all_chunks
