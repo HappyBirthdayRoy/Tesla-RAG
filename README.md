@@ -48,14 +48,13 @@ curl -X POST http://127.0.0.1:8000/ask \
 ```
 
 Response includes:
-- `answer` (OpenAI-synthesized answer constrained to retrieved chunks)
+- `answer` (Claude-synthesized answer constrained to retrieved chunks)
 - `citations` (`source_file`, `page`)
 - `contexts` (retrieved chunks with metadata)
 
-OpenAI settings for answer synthesis:
-- `OPENAI_API_KEY` (required)
-- `TESLA_RAG_OPENAI_MODEL` (optional, default: `gpt-4.1-mini`)
-- `TESLA_RAG_OPENAI_BASE_URL` (optional)
+Anthropic settings for answer synthesis:
+- `ANTHROPIC_API_KEY` (required)
+- `TESLA_RAG_ANTHROPIC_MODEL` (optional, default: `claude-sonnet-4-20250514`)
 
 ## Tests
 
@@ -69,9 +68,13 @@ pytest -q
 
 Versioned baseline outputs are stored under `results/v1/<run-id>/`.
 
-Current baseline artifact (this workspace run):
-- `results/v1/20260309T073125Z-baseline/metrics.json`
-- `results/v1/20260309T073125Z-baseline/summary.md`
+Current baseline artifact (Anthropic Claude reset, 2026-03-09):
+- `results/v1/v1-anthropic-reset/metrics.json`
+- `results/v1/v1-anthropic-reset/summary.md`
+
+Metrics (claude-sonnet-4-20250514, top_k=4):
+- Exact Match: 0.2000
+- Contains Gold: 0.7000
 
 ## Docker
 

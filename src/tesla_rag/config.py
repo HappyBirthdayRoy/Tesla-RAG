@@ -12,8 +12,7 @@ DEFAULT_COLLECTION = os.getenv("TESLA_RAG_COLLECTION", "tesla_docs")
 DEFAULT_TOP_K = int(os.getenv("TESLA_RAG_TOP_K", "4"))
 DEFAULT_CHUNK_MAX_CHARS = int(os.getenv("TESLA_RAG_CHUNK_MAX_CHARS", "1000"))
 DEFAULT_CHUNK_OVERLAP_CHARS = int(os.getenv("TESLA_RAG_CHUNK_OVERLAP_CHARS", "200"))
-DEFAULT_OPENAI_MODEL = os.getenv("TESLA_RAG_OPENAI_MODEL", "gpt-4.1-mini")
-DEFAULT_OPENAI_BASE_URL = os.getenv("TESLA_RAG_OPENAI_BASE_URL", "").strip()
+DEFAULT_ANTHROPIC_MODEL = os.getenv("TESLA_RAG_ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
 
 
 def configured_pdf_paths() -> list[str]:

@@ -12,16 +12,20 @@ PDFS = [
 ]
 
 
-class _FakeResponses:
+class _FakeContent:
+    text = "Mocked synthesized answer"
+
+
+class _FakeMessages:
     def create(self, **kwargs):
         class _Resp:
-            output_text = "Mocked synthesized answer"
+            content = [_FakeContent()]
 
         return _Resp()
 
 
-class _FakeOpenAIClient:
-    responses = _FakeResponses()
+class _FakeAnthropicClient:
+    messages = _FakeMessages()
 
 
 def test_ask_endpoint_smoke(tmp_path, fake_embedding) -> None:
@@ -29,7 +33,7 @@ def test_ask_endpoint_smoke(tmp_path, fake_embedding) -> None:
         persist_dir=str(tmp_path / "chroma"),
         collection_name="api_test_collection",
         embedding_fn=fake_embedding,
-        llm_client=_FakeOpenAIClient(),
+        llm_client=_FakeAnthropicClient(),
     )
     inserted = test_service.ingest(PDFS)
     assert inserted > 0

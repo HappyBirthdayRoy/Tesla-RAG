@@ -4,16 +4,16 @@ import os
 from collections import OrderedDict
 from typing import Any
 
-from tesla_rag.config import DEFAULT_COLLECTION, DEFAULT_OPENAI_BASE_URL, DEFAULT_OPENAI_MODEL, DEFAULT_TOP_K
+from tesla_rag.config import DEFAULT_ANTHROPIC_MODEL, DEFAULT_COLLECTION, DEFAULT_TOP_K
 from tesla_rag.ingest import extract_chunks
 from tesla_rag.models import Citation
 from tesla_rag.vectorstore import EmbeddingFn, VectorStore
 
 
-def _missing_openai_key_error() -> RuntimeError:
+def _missing_anthropic_key_error() -> RuntimeError:
     return RuntimeError(
-        "OPENAI_API_KEY is required for answer synthesis. "
-        "Set OPENAI_API_KEY and optionally TESLA_RAG_OPENAI_MODEL/TESLA_RAG_OPENAI_BASE_URL, "
+        "ANTHROPIC_API_KEY is required for answer synthesis. "
+        "Set ANTHROPIC_API_KEY and optionally TESLA_RAG_ANTHROPIC_MODEL, "
         "then retry. Fallback: use retrieve() for context-only output until credentials are configured."
     )
 
@@ -33,7 +33,7 @@ class RagService:
             embedding_fn=embedding_fn,
         )
         self._llm_client = llm_client
-        self._llm_model = llm_model or DEFAULT_OPENAI_MODEL
+        self._llm_model = llm_model or DEFAULT_ANTHROPIC_MODEL
 
     def ingest(self, pdf_paths: list[str]) -> int:
         chunks = extract_chunks(pdf_paths)
@@ -63,14 +63,13 @@ class RagService:
         if self._llm_client is not None:
             return self._llm_client
 
-        api_key = os.getenv("OPENAI_API_KEY", "").strip()
+        api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
         if not api_key:
-            raise _missing_openai_key_error()
+            raise _missing_anthropic_key_error()
 
-        from openai import OpenAI
+        from anthropic import Anthropic
 
-        base_url = DEFAULT_OPENAI_BASE_URL or None
-        self._llm_client = OpenAI(api_key=api_key, base_url=base_url)
+        self._llm_client = Anthropic(api_key=api_key)
         return self._llm_client
 
     def _synthesize_answer(self, question: str, contexts: list[dict]) -> str:
@@ -89,12 +88,12 @@ class RagService:
             + "\n\nReturn only the answer text."
         )
 
-        response = client.responses.create(
+        response = client.messages.create(
             model=self._llm_model,
-            input=prompt,
-            temperature=0,
+            max_tokens=512,
+            messages=[{"role": "user", "content": prompt}],
         )
-        output_text = (response.output_text or "").strip()
+        output_text = (response.content[0].text if response.content else "").strip()
         if not output_text:
             return "Not found in provided contexts."
         return output_text

@@ -64,7 +64,7 @@ def test_hybrid_query_fuses_vector_and_bm25_rankings() -> None:
     assert len(docs) == 2
 
 
-def test_answer_fails_fast_when_openai_key_missing(tmp_path, fake_embedding, monkeypatch) -> None:
+def test_answer_fails_fast_when_anthropic_key_missing(tmp_path, fake_embedding, monkeypatch) -> None:
     svc = RagService(
         persist_dir=str(tmp_path / "chroma"),
         collection_name="test_collection_failfast",
@@ -77,6 +77,6 @@ def test_answer_fails_fast_when_openai_key_missing(tmp_path, fake_embedding, mon
         ]
     )
     assert inserted > 0
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    with pytest.raises(RuntimeError, match="OPENAI_API_KEY is required for answer synthesis"):
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    with pytest.raises(RuntimeError, match="ANTHROPIC_API_KEY is required for answer synthesis"):
         svc.answer("What was total revenue in Q3 2025?", top_k=2)
