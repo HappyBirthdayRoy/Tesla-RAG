@@ -10,6 +10,8 @@ from tesla_rag.config import DEFAULT_CHUNK_MAX_CHARS, DEFAULT_CHUNK_OVERLAP_CHAR
 from tesla_rag.models import Chunk
 
 _HEADING_RE = re.compile(r"^(\d+(\.\d+)*\s+.+|[A-Z][A-Z\s\-:]{4,})$")
+_PERIOD_RE = re.compile(r"\b(?:Q[1-4]-\d{4}|\d{4}|YoY)\b", re.IGNORECASE)
+_NUMERIC_RE = re.compile(r"^\(?-?\d[\d,]*(?:\.\d+)?%?\)?$")
 
 
 def clean_text(text: str) -> str:
@@ -17,6 +19,88 @@ def clean_text(text: str) -> str:
     text = re.sub(r"[ \t]+", " ", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
+
+
+def _period_key(period: str) -> str:
+    return period.lower().replace("-", " ")
+
+
+def _strip_row_suffix_markers(label: str) -> str:
+    value = label.strip()
+    while True:
+        nxt = re.sub(r"\s*\(\d+\)\s*$", "", value)
+        if nxt == value:
+            return value.strip()
+        value = nxt
+
+
+def _is_numeric_token(token: str) -> bool:
+    return bool(_NUMERIC_RE.match(token))
+
+
+def _extract_row_alias(line: str, periods: list[str]) -> str | None:
+    if len(periods) < 4:
+        return None
+
+    tokens = line.split()
+    if len(tokens) < len(periods) + 2:
+        return None
+
+    values_rev: list[str] = []
+    i = len(tokens) - 1
+    while i >= 0 and len(values_rev) < len(periods):
+        tok = tokens[i]
+        low = tok.lower()
+        if low == "bp" and i > 0 and _is_numeric_token(tokens[i - 1]):
+            values_rev.append(f"{tokens[i - 1]} bp")
+            i -= 2
+            continue
+        if _is_numeric_token(tok):
+            values_rev.append(tok)
+            i -= 1
+            continue
+        if values_rev:
+            break
+        i -= 1
+
+    if len(values_rev) != len(periods):
+        return None
+
+    row_label = _strip_row_suffix_markers(" ".join(tokens[: i + 1]))
+    if len(row_label) < 4:
+        return None
+    if row_label[0].isdigit() or row_label.startswith("("):
+        return None
+
+    values = list(reversed(values_rev))
+    pairs = [f"{_period_key(period)} {value}" for period, value in zip(periods, values)]
+    return f"table_row {row_label.lower()} | " + " | ".join(pairs)
+
+
+def enrich_table_row_aliases(text: str) -> str:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if not lines:
+        return ""
+
+    out_lines: list[str] = []
+    active_periods: list[str] = []
+
+    for line in lines:
+        out_lines.append(line)
+
+        periods_in_line = _PERIOD_RE.findall(line)
+        if len(periods_in_line) >= 4:
+            active_periods = periods_in_line
+            continue
+
+        if not active_periods:
+            continue
+
+        alias = _extract_row_alias(line, active_periods)
+        if alias:
+            out_lines.append(alias)
+
+    return clean_text("\n".join(out_lines))
 
 
 def is_heading(line: str) -> bool:
@@ -103,6 +187,7 @@ def extract_chunks_from_pdf(
         if not page_text:
             continue
 
+        page_text = enrich_table_row_aliases(page_text)
         sections = split_sections(page_text)
         for section_i, (section_title, section_text) in enumerate(sections):
             for chunk_i, (_, text) in enumerate(
