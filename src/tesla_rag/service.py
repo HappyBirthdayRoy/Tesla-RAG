@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 from collections import OrderedDict
 from typing import Any
 
@@ -98,6 +99,66 @@ class RagService:
             return "Not found in provided contexts."
         return output_text
 
+    @staticmethod
+    def _extract_number_candidates(text: str) -> list[tuple[str, int, int]]:
+        candidates: list[tuple[str, int, int]] = []
+        pattern = re.compile(r"\b\d{1,3}(?:,\d{3})+\b|\b\d+\b")
+        for match in pattern.finditer(text):
+            token = match.group(0)
+            value = int(token.replace(",", ""))
+            if 1900 <= value <= 2100:
+                continue
+            candidates.append((token, match.start(), match.end()))
+        return candidates
+
+    @staticmethod
+    def _question_keywords(question: str) -> set[str]:
+        words = re.findall(r"[a-z]+", question.lower())
+        stop = {
+            "in",
+            "the",
+            "what",
+            "is",
+            "and",
+            "of",
+            "to",
+            "for",
+            "on",
+            "from",
+            "with",
+            "q",
+            "fy",
+            "usd",
+            "millions",
+            "million",
+            "gaap",
+        }
+        return {w for w in words if len(w) >= 4 and w not in stop}
+
+    def _select_best_numeric_answer(self, question: str, answer_text: str, contexts: list[dict]) -> str:
+        if not re.search(r"\d", question):
+            return answer_text
+
+        question_keywords = self._question_keywords(question)
+        scored: list[tuple[int, str]] = []
+
+        def add_candidates(source_text: str, source_bias: int) -> None:
+            for token, start, end in self._extract_number_candidates(source_text):
+                window = source_text[max(0, start - 100) : min(len(source_text), end + 100)].lower()
+                keyword_score = sum(1 for kw in question_keywords if kw in window) * 10
+                comma_bonus = 5 if "," in token else 0
+                score = source_bias + keyword_score + comma_bonus
+                scored.append((score, token))
+
+        add_candidates(answer_text, 100)
+        for ctx in contexts:
+            add_candidates(ctx.get("text", ""), 0)
+
+        if not scored:
+            return answer_text
+        scored.sort(key=lambda row: row[0], reverse=True)
+        return scored[0][1]
+
     def answer(self, question: str, top_k: int = DEFAULT_TOP_K) -> dict:
         contexts = self.retrieve(question=question, top_k=top_k)
         if not contexts:
@@ -113,6 +174,7 @@ class RagService:
             citations_map[key] = Citation(source_file=ctx["source_file"], page=ctx["page"])
 
         answer_text = self._synthesize_answer(question=question, contexts=contexts)
+        answer_text = self._select_best_numeric_answer(question=question, answer_text=answer_text, contexts=contexts)
         citations = [{"source_file": c.source_file, "page": c.page} for c in citations_map.values()]
 
         return {
