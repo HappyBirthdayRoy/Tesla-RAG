@@ -1,0 +1,41 @@
+{
+  "version": "v1",
+  "timestamp_utc": "2026-03-09T07:31:25Z",
+  "run_status": "blocked_environment",
+  "steps": {
+    "docker_build": {
+      "ok": false,
+      "command": "docker build -t tesla-rag:latest .",
+      "error": "docker: command not found"
+    },
+    "pytest": {
+      "ok": false,
+      "command": "pytest -q",
+      "error": "python environment unavailable (no pip/ensurepip, missing dependencies)"
+    },
+    "ingest": {
+      "ok": false,
+      "command": "python -m tesla_rag.cli --chroma-dir .chroma",
+      "error": "python dependencies missing (chromadb, pypdf, sentence-transformers)"
+    },
+    "ask_smoke": {
+      "ok": false,
+      "command": "POST /ask",
+      "error": "service runtime not startable due missing dependencies"
+    }
+  },
+  "metrics": {
+    "exact_match": null,
+    "judge": {
+      "available": false,
+      "reason": "evaluation runtime blocked before model execution"
+    }
+  },
+  "constraints": {
+    "allowed_pdfs": [
+      "/home/node/.openclaw/media/inbound/0af5279c-11f2-4069-8708-061dfda248ae.pdf",
+      "/home/node/.openclaw/media/inbound/0e52d151-9288-4c1f-893e-f4d10ec0e029.pdf"
+    ],
+    "external_data_used": false
+  }
+}
