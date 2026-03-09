@@ -40,7 +40,7 @@ class RagService:
         return self.store.upsert_chunks(chunks)
 
     def retrieve(self, question: str, top_k: int = DEFAULT_TOP_K) -> list[dict]:
-        response = self.store.query(question=question, top_k=top_k)
+        response = self.store.hybrid_query(question=question, top_k=top_k)
         docs = response.get("documents", [[]])[0]
         metas = response.get("metadatas", [[]])[0]
         distances = response.get("distances", [[]])[0]
