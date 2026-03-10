@@ -64,6 +64,56 @@ def test_hybrid_query_fuses_vector_and_bm25_rankings() -> None:
     assert len(docs) == 2
 
 
+def test_hybrid_query_boosts_matching_table_row_and_section() -> None:
+    store = VectorStore.__new__(VectorStore)
+
+    def fake_vector_query(question: str, top_k: int) -> dict:
+        return {
+            "ids": [["wrong", "right"]],
+            "documents": [[
+                "Our vehicle deliveries include only vehicles transferred to end customers.",
+                (
+                    "Depreciation, amortization and impairment 1,348 1,496 1,447 1,433 1,625\n"
+                    "table_row depreciation, amortization and impairment | q3 2024 1,348 | "
+                    "q4 2024 1,496 | q1 2025 1,447 | q2 2025 1,433 | q3 2025 1,625"
+                ),
+            ]],
+            "metadatas": [[
+                {"source_file": "a.pdf", "page": 1, "section": "CERTAIN TERMS"},
+                {"source_file": "a.pdf", "page": 2, "section": "CASH FLOWS FROM OPERATING ACTIVITIES"},
+            ]],
+            "distances": [[0.01, 0.02]],
+        }
+
+    def fake_all_chunks() -> dict:
+        return {
+            "ids": ["wrong", "right"],
+            "documents": [
+                "Our vehicle deliveries include only vehicles transferred to end customers.",
+                (
+                    "Depreciation, amortization and impairment 1,348 1,496 1,447 1,433 1,625\n"
+                    "table_row depreciation, amortization and impairment | q3 2024 1,348 | "
+                    "q4 2024 1,496 | q1 2025 1,447 | q2 2025 1,433 | q3 2025 1,625"
+                ),
+            ],
+            "metadatas": [
+                {"source_file": "a.pdf", "page": 1, "section": "CERTAIN TERMS"},
+                {"source_file": "a.pdf", "page": 2, "section": "CASH FLOWS FROM OPERATING ACTIVITIES"},
+            ],
+        }
+
+    store.query = fake_vector_query  # type: ignore[method-assign]
+    store.get_all_chunks = fake_all_chunks  # type: ignore[method-assign]
+
+    out = store.hybrid_query(
+        "In Q3 2025 cash flows from operating activities, what is depreciation, amortization and impairment (in millions of USD)?",
+        top_k=1,
+        rrf_k=60,
+    )
+
+    assert out["metadatas"][0][0]["page"] == 2
+
+
 def test_answer_fails_fast_when_anthropic_key_missing(tmp_path, fake_embedding, monkeypatch) -> None:
     svc = RagService(
         persist_dir=str(tmp_path / "chroma"),

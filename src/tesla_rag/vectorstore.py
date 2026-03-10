@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any, Protocol
 
 import chromadb
@@ -9,6 +10,102 @@ from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunct
 from rank_bm25 import BM25Okapi
 
 from tesla_rag.models import Chunk
+
+_STOP_WORDS = {
+    "and",
+    "for",
+    "from",
+    "in",
+    "is",
+    "millions",
+    "million",
+    "of",
+    "on",
+    "the",
+    "to",
+    "usd",
+    "what",
+}
+_TABLE_ROW_RE = re.compile(r"table_row\s+([^|]+)\|", re.IGNORECASE)
+
+
+def _normalize_text(text: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", text.lower())).strip()
+
+
+def _keyword_tokens(text: str) -> set[str]:
+    tokens = _normalize_text(text).split()
+    return {token for token in tokens if len(token) >= 3 and token not in _STOP_WORDS}
+
+
+def _table_row_bonus(question: str, document: str) -> float:
+    question_tokens = _keyword_tokens(question)
+    if not question_tokens:
+        return 0.0
+
+    best = 0.0
+    for label in _TABLE_ROW_RE.findall(document):
+        label_tokens = _keyword_tokens(label)
+        if not label_tokens:
+            continue
+        overlap = len(question_tokens & label_tokens)
+        if overlap:
+            precision = overlap / len(label_tokens)
+            best = max(best, overlap * 0.10 + precision * 0.24)
+    return best
+
+
+def _scope_bonus(question: str, document: str) -> float:
+    question_norm = _normalize_text(question)
+    document_norm = _normalize_text(document)
+
+    bonus = 0.0
+    has_quarter_markers = any(marker in document_norm for marker in ("q1 2025", "q2 2025", "q3 2025", "q4 2025"))
+    has_year_series = bool(re.search(r"\b2021 2022 2023 2024 2025\b", document_norm))
+
+    if "fy 2025" in question_norm:
+        if has_year_series:
+            bonus += 0.22
+        if has_quarter_markers:
+            bonus -= 0.12
+
+    if "q4 2025" in question_norm:
+        if "q4 2025" in document_norm or "4q 2025" in document_norm:
+            bonus += 0.12
+        if has_year_series and "q4 2025" not in document_norm and "4q 2025" not in document_norm:
+            bonus -= 0.12
+
+    if "q3 2025" in question_norm:
+        if "q3 2025" in document_norm or "3q 2025" in document_norm:
+            bonus += 0.12
+        if has_year_series and "q3 2025" not in document_norm and "3q 2025" not in document_norm:
+            bonus -= 0.12
+
+    return bonus
+
+
+def _lexical_rerank_bonus(question: str, document: str, metadata: dict[str, Any]) -> float:
+    question_norm = _normalize_text(question)
+    document_norm = _normalize_text(document)
+    question_tokens = _keyword_tokens(question)
+    document_tokens = _keyword_tokens(document)
+    overlap = len(question_tokens & document_tokens)
+
+    section = str(metadata.get("section", ""))
+    section_tokens = _keyword_tokens(section)
+    section_overlap = len(question_tokens & section_tokens)
+
+    bonus = overlap * 0.015
+    bonus += section_overlap * 0.08
+    bonus += _table_row_bonus(question, document)
+    bonus += _scope_bonus(question, document)
+
+    if "q3 2025" in question_norm and "q3 2025" in document_norm:
+        bonus += 0.04
+    if "q4 2025" in question_norm and "q4 2025" in document_norm:
+        bonus += 0.04
+
+    return bonus
 
 
 class EmbeddingFn(Protocol):
@@ -124,6 +221,13 @@ class VectorStore:
             fused_scores[doc_id] = fused_scores.get(doc_id, 0.0) + 1.0 / (rrf_k + rank)
         for rank, doc_id in enumerate(bm25_ranked_ids, start=1):
             fused_scores[doc_id] = fused_scores.get(doc_id, 0.0) + 1.35 / (rrf_k + rank)
+
+        for doc_id, entry in by_id.items():
+            fused_scores[doc_id] = fused_scores.get(doc_id, 0.0) + _lexical_rerank_bonus(
+                question=question,
+                document=entry["document"],
+                metadata=entry["metadata"],
+            )
 
         ranked = sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
 
